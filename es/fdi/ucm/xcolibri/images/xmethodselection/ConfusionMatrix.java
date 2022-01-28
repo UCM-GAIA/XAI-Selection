@@ -1,6 +1,6 @@
 package es.fdi.ucm.xcolibri.images.xmethodselection;
 
-import java.util.Arrays;
+import java.util.Vector;
 
 public class ConfusionMatrix {
 	public enum XMethod  {lime, anchor, ig, xrai};
@@ -8,6 +8,9 @@ public class ConfusionMatrix {
 	public int matrix[][];
 	public double precision[];
 	public double recall[];
+	
+	public Vector<Double> rmse; 
+	
 	public double getPrecision() {
 		return prec;
 	}
@@ -19,14 +22,20 @@ public class ConfusionMatrix {
 	public double getAccuracy() {
 		return accu;
 	}
+	
+	public double getRMSE()
+	{
+		return this.avgRMSE;
+	}
 
-	double prec, rec, accu;
+	double prec, rec, accu, avgRMSE;
 	
 	public ConfusionMatrix()
 	{
 		matrix = new int[dim][dim];
 		precision = new double[dim];
 		recall = new double[dim];
+		rmse = new Vector<Double>();
 		reset();
 	}
 	
@@ -34,14 +43,15 @@ public class ConfusionMatrix {
 		for(int i=0; i<dim; i++)
 			for(int j=0; j<dim; j++)
 				matrix[i][j] =0;
-		
 	}
 
-	public void add(String real, String predicted)
+	public void add(String real, String predicted, double error)
 	{
 		XMethod r = XMethod.valueOf(real);
 		XMethod p = XMethod.valueOf(predicted);
 		matrix[r.ordinal()][p.ordinal()]++;
+		rmse.add(error);
+
 		updateMetrics();
 	}
 	
@@ -95,6 +105,13 @@ public class ConfusionMatrix {
 			TP+=matrix[i][i];
 		}
 		accu = TP/total;
+		
+		
+		//RMSE
+		double acum = 0.0;
+		for(Double d: rmse)
+			acum+= d;
+		avgRMSE = acum / (double)rmse.size();
 	}
 	
 	public void print(boolean printMatrix)
@@ -118,5 +135,6 @@ public class ConfusionMatrix {
 		System.out.println("Precision: "+ String.format("%.2f",this.prec));
 		System.out.println("Recall: "+ String.format("%.2f",this.rec));
 		System.out.println("Accuracy: "+ String.format("%.2f",this.accu));
+		System.out.println("RMSE: "+ String.format("%.2f",this.avgRMSE));
 	}
 }

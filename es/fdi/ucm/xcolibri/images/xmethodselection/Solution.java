@@ -118,7 +118,10 @@ public class Solution implements CaseComponent {
 		return "Solution [lime=" + lime + ", anchor=" + anchor + ", ig=" + ig + ", xrai=" + xrai + "]";
 	}
 
-
+	public double[] toArray()
+	{
+		return new double[] {this.lime, this.anchor, this.ig, this.xrai};
+	}
 
 
 	@Override

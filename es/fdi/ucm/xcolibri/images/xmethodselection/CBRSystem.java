@@ -202,7 +202,13 @@ public class CBRSystem implements StandardCBRApplication{
 		String real =  ((Solution)qCase.getSolution()).getMajoritary();
 		String predicted = classifier.getClass(solutions);
 		
-		cMatrix.add(real, predicted);
+		double rmse = RMSE.computeRMSE((Solution)qCase.getSolution(), solutions);
+		
+		cMatrix.add(real, predicted, rmse);
+		
+		//real     <34,30, 10, 7>
+		//predicted <31,32, 9, 8>
+		//RMSE
 	}
 		
 	
@@ -327,10 +333,10 @@ public class CBRSystem implements StandardCBRApplication{
 		LocalSimilarityFunction similFunction = new FeatureSimilarity();
 		Classifier classifier = new ClassifierSimpleMajority(); 
 		
-		for(int cb = 100; cb<=100 ; cb+=5)
+		//for(int cb = 100; cb<=100 ; cb+=5)
 		{
 			//System.out.println(cb);
-			PERCENTAGE = cb;
+			//PERCENTAGE = cb;
 			ConfusionMatrix cMatrix = new ConfusionMatrix();
 
 			CBRSystem cbr = new CBRSystem(10,similFunction,classifier,cMatrix);				
@@ -352,6 +358,9 @@ public class CBRSystem implements StandardCBRApplication{
 		similFunction[1] = new MatrixSimilarityFunction(smS);
 		similFunction[2] = new MatrixSimilarityFunction(smP);
 		similFunction[3] = new FeatureSimilarity();
+		
+		double[] weights = {.5,.10,.10,.30};
+		LocalSimilarityFunction comb = new CombinedMatrixSimilarityFunction(similFunction, weights);
 		
 		Classifier[] classifier = {new ClassifierSimpleMajority(),new ClassifierAggregate()};
 		
@@ -379,5 +388,5 @@ public class CBRSystem implements StandardCBRApplication{
 			}
 		}
 	}
-*/	
+*/
 }
