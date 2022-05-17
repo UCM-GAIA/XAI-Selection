@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.ErrorMetric;
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.MRR;
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.Aggregation;
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.Max;
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.WeightedAverage;
 import es.ucm.fdi.gaia.jcolibri.casebase.CachedLinealCaseBase;
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
 import es.ucm.fdi.gaia.jcolibri.cbrcore.Attribute;
@@ -98,7 +103,7 @@ public class CBRSystem implements StandardCBRApplication{
 			cases.add(_case);
 		}
 		
-		balanceCases(cases);
+		if(BALANCE_CASEBASE) balanceCases(cases);
 		filterByPercentage(cases);
 		caseBase.init(cases);	
 		//System.out.println(caseBase.getCases().size());
@@ -202,9 +207,18 @@ public class CBRSystem implements StandardCBRApplication{
 		String real =  ((Solution)qCase.getSolution()).getMajoritary();
 		String predicted = classifier.getClass(solutions);
 		
-		double rmse = RMSE.computeRMSE((Solution)qCase.getSolution(), solutions);
+		if(aggr instanceof WeightedAverage)
+		{
+			WeightedAverage wa = (WeightedAverage)aggr;
+			Vector<Double> similarities = new Vector<Double>();
+			for(int i=0; i<selCases.size(); i++)
+				similarities.add(retCases.get(i).getEval());
+			wa.setSimilarities(similarities);
+		}
 		
-		cMatrix.add(real, predicted, rmse);
+		double error = errorMetric.compute((Solution)qCase.getSolution(), solutions, aggr);
+		
+		cMatrix.add(real, predicted, error);
 		
 		//real     <34,30, 10, 7>
 		//predicted <31,32, 9, 8>
@@ -213,13 +227,16 @@ public class CBRSystem implements StandardCBRApplication{
 		
 	
 	int k; LocalSimilarityFunction similFunction; Classifier classifier; ConfusionMatrix cMatrix;
+	ErrorMetric errorMetric; Aggregation aggr;
 	
-	public CBRSystem(int k, LocalSimilarityFunction similFunction, Classifier classifier, ConfusionMatrix cMatrix)
+	public CBRSystem(int k, LocalSimilarityFunction similFunction, Classifier classifier, ConfusionMatrix cMatrix, ErrorMetric errorMetric, Aggregation aggr)
 	{
 		this.k = k;
 		this.similFunction = similFunction;
 		this.classifier = classifier;
 		this.cMatrix = cMatrix;
+		this.errorMetric = errorMetric;
+		this.aggr = aggr;
 	}
 
 	@Override
@@ -299,6 +316,7 @@ public class CBRSystem implements StandardCBRApplication{
 	}
 */	
 	public static int PERCENTAGE =100;
+	public static boolean BALANCE_CASEBASE = false;
 /*
 	public static void main(String[] args) {
 		SimilMatrix smS = new SimilMatrix("ssimMatrix.csv", 2.0);
@@ -332,6 +350,9 @@ public class CBRSystem implements StandardCBRApplication{
 	public static void main(String[] args) {
 		LocalSimilarityFunction similFunction = new FeatureSimilarity();
 		Classifier classifier = new ClassifierSimpleMajority(); 
+		ErrorMetric errorMetric = new MRR();//new NDCG();//new RMSE();
+		Aggregation aggr = new Max();
+		int k = 3;
 		
 		//for(int cb = 100; cb<=100 ; cb+=5)
 		{
@@ -339,7 +360,7 @@ public class CBRSystem implements StandardCBRApplication{
 			//PERCENTAGE = cb;
 			ConfusionMatrix cMatrix = new ConfusionMatrix();
 
-			CBRSystem cbr = new CBRSystem(10,similFunction,classifier,cMatrix);				
+			CBRSystem cbr = new CBRSystem(k,similFunction,classifier,cMatrix, errorMetric, aggr);				
 				LeaveOneOutEvaluator eval = new LeaveOneOutEvaluator();
 				eval.init(cbr);
 				eval.LeaveOneOut();

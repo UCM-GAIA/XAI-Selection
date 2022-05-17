@@ -9,7 +9,7 @@ public class ConfusionMatrix {
 	public double precision[];
 	public double recall[];
 	
-	public Vector<Double> rmse; 
+	public Vector<Double> error; 
 	
 	public double getPrecision() {
 		return prec;
@@ -23,19 +23,19 @@ public class ConfusionMatrix {
 		return accu;
 	}
 	
-	public double getRMSE()
+	public double getError()
 	{
-		return this.avgRMSE;
+		return this.avgError;
 	}
 
-	double prec, rec, accu, avgRMSE;
+	double prec, rec, accu, avgError;
 	
 	public ConfusionMatrix()
 	{
 		matrix = new int[dim][dim];
 		precision = new double[dim];
 		recall = new double[dim];
-		rmse = new Vector<Double>();
+		error = new Vector<Double>();
 		reset();
 	}
 	
@@ -45,12 +45,12 @@ public class ConfusionMatrix {
 				matrix[i][j] =0;
 	}
 
-	public void add(String real, String predicted, double error)
+	public void add(String real, String predicted, double errorValue)
 	{
 		XMethod r = XMethod.valueOf(real);
 		XMethod p = XMethod.valueOf(predicted);
 		matrix[r.ordinal()][p.ordinal()]++;
-		rmse.add(error);
+		error.add(errorValue);
 
 		updateMetrics();
 	}
@@ -109,9 +109,9 @@ public class ConfusionMatrix {
 		
 		//RMSE
 		double acum = 0.0;
-		for(Double d: rmse)
+		for(Double d: error)
 			acum+= d;
-		avgRMSE = acum / (double)rmse.size();
+		avgError = acum / (double)error.size();
 	}
 	
 	public void print(boolean printMatrix)
@@ -135,6 +135,6 @@ public class ConfusionMatrix {
 		System.out.println("Precision: "+ String.format("%.2f",this.prec));
 		System.out.println("Recall: "+ String.format("%.2f",this.rec));
 		System.out.println("Accuracy: "+ String.format("%.2f",this.accu));
-		System.out.println("RMSE: "+ String.format("%.2f",this.avgRMSE));
+		System.out.println("Error: "+ String.format("%.2f",this.avgError));
 	}
 }
