@@ -14,6 +14,14 @@ public class RMSE implements ErrorMetric {
 		double[] actualVotes = actual.toArray();
 
 		double[] predictedVotes = aggr.aggregate(predicted);
+
+		//Normalize
+		double totalActual = actual.getTotalVotes();
+		double totalPred = 0.0;
+		for(int i=0; i<predictedVotes.length; i++) totalPred+=predictedVotes[i];
+		double ratio = totalActual/totalPred;
+		for(int i=0; i<predictedVotes.length; i++) predictedVotes[i]*=ratio;
+		//end normalize
 		
 		//return rmse
 		double rmse = rmse(actualVotes, predictedVotes);
@@ -37,4 +45,10 @@ public class RMSE implements ErrorMetric {
 		return Math.sqrt(acum);
 	}
 
+	
+	public String toString()
+	{
+		return "RMSE";
+	}
+	
 }

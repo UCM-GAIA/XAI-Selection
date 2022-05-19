@@ -11,7 +11,7 @@ import java.util.Vector;
 import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.ErrorMetric;
 import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.MRR;
 import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.Aggregation;
-import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.Max;
+import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.Baseline;
 import es.fdi.ucm.xcolibri.images.xmethodselection.errorMetrics.aggregation.WeightedAverage;
 import es.ucm.fdi.gaia.jcolibri.casebase.CachedLinealCaseBase;
 import es.ucm.fdi.gaia.jcolibri.cbraplications.StandardCBRApplication;
@@ -108,10 +108,12 @@ public class CBRSystem implements StandardCBRApplication{
 		caseBase.init(cases);	
 		//System.out.println(caseBase.getCases().size());
 		
+		/*
 		Solution solution = new Solution();
 		for(CBRCase c: caseBase.getCases())
 		{
 			Solution cSol = (Solution)c.getSolution();
+			System.out.println(cSol.toString());
 			String xmethod = cSol.getMajoritary();
 			if(xmethod.equals("lime")) solution.incLime();
 			if(xmethod.equals("anchor")) solution.incAnchor();
@@ -119,7 +121,9 @@ public class CBRSystem implements StandardCBRApplication{
 			if(xmethod.equals("xrai")) solution.incXrai();
 			
 		}
-		//System.out.println(solution.toString());
+		*/
+		
+		
 	}
 	
 	
@@ -348,10 +352,11 @@ public class CBRSystem implements StandardCBRApplication{
 	 
 	 //PrINT matrix
 	public static void main(String[] args) {
-		LocalSimilarityFunction similFunction = new FeatureSimilarity();
+		SimilMatrix smL = new SimilMatrix("latent.csv", 1.0);
+		LocalSimilarityFunction similFunction = new MatrixSimilarityFunction(smL,"latent");
 		Classifier classifier = new ClassifierSimpleMajority(); 
 		ErrorMetric errorMetric = new MRR();//new NDCG();//new RMSE();
-		Aggregation aggr = new Max();
+		Aggregation aggr = new Baseline(new double[] {26,5,61,44});//new Min();
 		int k = 3;
 		
 		//for(int cb = 100; cb<=100 ; cb+=5)

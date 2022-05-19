@@ -36,6 +36,7 @@ public class SimilMatrix {
 	    }
 		catch (Exception e) {
 			System.err.println(e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -46,7 +47,7 @@ public class SimilMatrix {
 	
 	
 	public static void main(String[] args) {
-		SimilMatrix sm = new SimilMatrix("histogramMatrix.csv", 1.0);
+		SimilMatrix sm = new SimilMatrix("latent.csv", 1.0);
 
 	}
 

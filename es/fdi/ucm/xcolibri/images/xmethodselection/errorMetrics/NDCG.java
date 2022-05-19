@@ -14,6 +14,17 @@ public class NDCG implements ErrorMetric {
 		
 		List<XMVotes> sortedSolution = XMVotes.sortSolution(actual.toArray());
 		double[] aggrSol = aggr.aggregate(predicted);
+		
+		
+		//Normalize
+		double totalActual = actual.getTotalVotes();
+		double totalPred = 0.0;
+		for(int i=0; i<aggrSol.length; i++) totalPred+=aggrSol[i];
+		double ratio = totalActual/totalPred;
+		for(int i=0; i<aggrSol.length; i++) aggrSol[i]*=ratio;
+		//end normalize
+		
+		
 		List<XMVotes> sortedRanked = XMVotes.sortSolution(aggrSol);
 		
 		// TODO Auto-generated method stub
@@ -49,7 +60,10 @@ public class NDCG implements ErrorMetric {
 		  }
 
 
-	
+	public String toString()
+	{
+		return "NDCG";
+	}
 		  
 		  
 		  

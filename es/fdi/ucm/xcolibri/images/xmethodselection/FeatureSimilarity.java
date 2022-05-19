@@ -61,4 +61,10 @@ public class FeatureSimilarity implements LocalSimilarityFunction {
 		return true;
 	}
 
+	public String toString()
+	{
+		return "Feature";
+	}
+	
+	
 }

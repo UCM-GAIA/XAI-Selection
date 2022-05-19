@@ -28,6 +28,10 @@ public class MRR implements ErrorMetric {
 		return 0;
 	}
 
+	public String toString()
+	{
+		return "MRR";
+	}
 	
 	public static void main(String[] args)
 	  {

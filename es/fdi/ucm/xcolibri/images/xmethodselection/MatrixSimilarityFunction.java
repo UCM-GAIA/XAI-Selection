@@ -6,9 +6,11 @@ import es.ucm.fdi.gaia.jcolibri.method.retrieve.NNretrieval.similarity.LocalSimi
 public class MatrixSimilarityFunction implements LocalSimilarityFunction {
 
 	SimilMatrix simMatrix;
-	public MatrixSimilarityFunction(SimilMatrix simMatrix)
+	String id;
+	public MatrixSimilarityFunction(SimilMatrix simMatrix, String id)
 	{
 		this.simMatrix = simMatrix;
+		this.id = id;
 	}
 	
 	@Override
@@ -28,4 +30,10 @@ public class MatrixSimilarityFunction implements LocalSimilarityFunction {
 		return true;
 	}
 
+	public String toString()
+	{
+		return id;
+	}
+	
+	
 }

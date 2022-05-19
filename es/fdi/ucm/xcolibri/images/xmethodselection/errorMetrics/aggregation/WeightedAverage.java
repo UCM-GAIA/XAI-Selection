@@ -18,8 +18,14 @@ public class WeightedAverage implements Aggregation {
 		double[] predictedVotes = new double[] {0.0, 0.0, 0.0, 0.0};
 		double k = (double)solutions.size();
 		double accumSim = 0.0;
-		for(double d: similarities)
-			accumSim+=d;
+		double[] sims = new double[similarities.size()];
+		for(int i=0; i<similarities.size(); i++)
+		{
+			sims[i] = similarities.get(i);
+			if(sims[i]==0)
+				sims[i] = 0.1;
+			accumSim+=sims[i];
+		}
 		if(accumSim==0)
 			accumSim = 1;
 		double normRatio = k/accumSim;
@@ -30,7 +36,7 @@ public class WeightedAverage implements Aggregation {
 			for(int s=0; s<solutions.size(); s++)
 			{
 				double[] values = solutions.get(s).toArray();
-				predictedVotes[i] += (values[i]*similarities.get(s));
+				predictedVotes[i] += (values[i]*sims[s]);
 			}
 		}
 		
@@ -39,5 +45,8 @@ public class WeightedAverage implements Aggregation {
 		
 		return predictedVotes;
 	}
-
+	public String toString()
+	{
+		return "WA";
+	}
 }

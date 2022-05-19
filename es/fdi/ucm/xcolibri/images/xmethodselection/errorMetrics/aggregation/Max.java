@@ -19,5 +19,8 @@ public class Max implements Aggregation {
 		}	
 		return predictedVotes;
 	}
-
+	public String toString()
+	{
+		return "Max";
+	}
 }

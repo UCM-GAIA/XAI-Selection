@@ -123,7 +123,11 @@ public class Solution implements CaseComponent {
 		return new double[] {this.lime, this.anchor, this.ig, this.xrai};
 	}
 
-
+	public double getTotalVotes()
+	{
+		return lime+anchor+ig+xrai;
+	}
+	
 	@Override
 	public Attribute getIdAttribute() {
 		// TODO Auto-generated method stub

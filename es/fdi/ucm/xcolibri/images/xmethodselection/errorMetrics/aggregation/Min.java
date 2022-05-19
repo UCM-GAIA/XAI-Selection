@@ -20,4 +20,8 @@ public class Min implements Aggregation {
 		return predictedVotes;
 	}
 
+	public String toString()
+	{
+		return "Min";
+	}
 }

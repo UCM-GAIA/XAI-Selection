@@ -23,5 +23,9 @@ public class AverageAggr implements Aggregation {
 		
 		return predictedVotes;
 	}
-
+	
+	public String toString()
+	{
+		return "Avg";
+	}
 }
